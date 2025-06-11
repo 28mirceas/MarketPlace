@@ -18,11 +18,11 @@ MarketPlace este o aplicație simplă de tip magazin-online, scrisă în Python.
 git clone https://github.com/28mirceas/MarketPlace.git
 cd MarketPlace
 ```
-3. Instalează dependențele:
+2. Instalează dependențele:
 ```bash   
 pip install -r requirements.txt
 ```
-5. Creează baza de date rulând scriptul:
+3. Creează baza de date rulând scriptul:
  ```bash  
 python app/databasemanager.py
 ```
