@@ -2,7 +2,7 @@
 
 ## Descriere
 
-MarketPlace este o aplicație simplă de tip magazin online, scrisă în Python. Aplicația permite crearea și gestionarea unei baze de date, oferind operațiuni CRUD (Creare, Citire, Actualizare, Ștergere) pentru utilizatori, categorii, produse și comenzi.
+MarketPlace este o aplicație simplă de tip magazin-online, scrisă în Python. Aplicația permite crearea și gestionarea unei baze de date, oferind operațiuni CRUD (Creare, Citire, Actualizare, Ștergere) pentru utilizatori, categorii, produse și comenzi.
 
 ## Tehnologii folosite
 
@@ -36,15 +36,15 @@ python Main.py
 3.	Creează primul utilizator în secțiunea „User Management”.
 Notă: Primul utilizator creat are drepturi de administrator și poate șterge utilizatori, categorii, produse și comenzi.
 4.	Utilizează meniul pentru a administra utilizatorii, categoriile, produsele și comenzile.
-5.	 Pentru a ieși din aplicație, selectează opțiunea „5. Ieșire din program”.
+5.	Pentru a ieși din aplicație, selectează opțiunea „5. Ieșire din program”.
 
 
 ## Funcționalități principale
 
-•	User Management: adaugă, modifică, șterge utilizatori; schimbă parola; login/logout; listare utilizatori
-•	Category Management: adaugă, modifică, șterge categorii; listare categorii
-•	Product Management: adaugă, modifică, șterge produse; listare produse
-•	Order Management: adaugă, modifică, șterge comenzi; listare comenzi pentru utilizatorul logat
+1. User Management: adaugă, modifică, șterge utilizatori; schimbă parola; login/logout; listare utilizatori
+2. Category Management: adaugă, modifică, șterge categorii; listare categorii
+3. Product Management: adaugă, modifică, șterge produse; listare produse
+4. Order Management: adaugă, modifică, șterge comenzi; listare comenzi pentru utilizatorul logat
 
 
 
