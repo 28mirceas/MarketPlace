@@ -29,11 +29,15 @@ python app/databasemanager.py
 
 ## Utilizare
 
-1.	Pentru inceput recomand descarcarea aplicatiei din Git si rularea la nivel local într-un mediu Python de preferat PyCharm 2024.3.2.
-2.	Se va merge in fisierul app/databasemanager.py si se va rula acest fisier pentru a se crea baza de date cu tabelele aferente. Am ales “baza12.bd” ca nume pentru baza de data creata. Se poate alege orice nume pentru baza de date cu conditia ca el sa fie modificat in celelate fisiere din folderul app. 
-3.	Urmatorul pas este creerea unui user. Acest lucru se va face direct din fisierul “Main.py” la sectiunea “User Management”.
-    FOARTE IMPORTANT: Primul user creat are drepturi de Administrator - numai el poate sterge alti useri creati, categorii, produse si comenzi pentru produsele aferente. 
-5.	Pentru a ieși din program, se merge in meniul principal la optiunea “5. Iesire din program”.
+1.	Porneste aplicatia:
+```bash  
+python Main.py
+```
+3.	Creează primul utilizator în secțiunea „User Management”.
+Notă: Primul utilizator creat are drepturi de administrator și poate șterge utilizatori, categorii, produse și comenzi.
+4.	Utilizează meniul pentru a administra utilizatorii, categoriile, produsele și comenzile.
+5.	 Pentru a ieși din aplicație, selectează opțiunea „5. Ieșire din program”.
+
 
 ## Comenzi pentru administrarea magazinului  
 
