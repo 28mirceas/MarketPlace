@@ -39,12 +39,13 @@ Notă: Primul utilizator creat are drepturi de administrator și poate șterge u
 5.	 Pentru a ieși din aplicație, selectează opțiunea „5. Ieșire din program”.
 
 
-## Comenzi pentru administrarea magazinului  
+## Funcționalități principale
 
-1.	Pentru User se merge la sectiunea User Management si avem optiunile: adauga user, modifica user, schimba parola, stergere user, login si logout, listare useri;
-2.	Pentru Categorie se merge la Category Management si avem optiunile: adauga categorie, modifica o categorie, sterge o categorie si listeaza categoriile existente; 
-3.	Pentru Produs se merge pe sectiunea Product Management si avem optiunile: adauga produs, modifica un produs, sterge un produs si listeaza produsele existente;
-4.	Pentru Comenzi se merge pe sectiunea Order Management si avem optiunile: adauga o comanda, modifica o comanda, sterge o comanda si listare comenzi care apartin userului logat.
+•	User Management: adaugă, modifică, șterge utilizatori; schimbă parola; login/logout; listare utilizatori
+•	Category Management: adaugă, modifică, șterge categorii; listare categorii
+•	Product Management: adaugă, modifică, șterge produse; listare produse
+•	Order Management: adaugă, modifică, șterge comenzi; listare comenzi pentru utilizatorul logat
+
 
 
 
