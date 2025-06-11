@@ -56,9 +56,29 @@ python tests/suita_teste.py
 ```
 Pentru generarea rapoartelor HTML, se folosește HtmlTestRunner.
 
+##  Structura proiectului
+```bash 
+MarketPlace/
+│
+├── app/
+│   ├── databasemanager.py
+│   ├── user.py
+│   ├── category.py
+│   ├── product.py
+│   ├── order.py
+│   └── Main.py
+├── tests/
+│   ├── suita_teste.py
+│   ├── test_user.py
+│   ├── test_product.py
+│   ├── test_category.py
+│   ├── test_order.py
+│
+|
+├── requirements.txt
+└── README.md
 
-
-
+```
 
 
 
