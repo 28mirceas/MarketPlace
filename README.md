@@ -78,6 +78,10 @@ MarketPlace/
 ├── requirements.txt
 └── README.md
 
+## Licenta
+
+[MIT](https://choosealicense.com/licenses/mit/)
+
 ```
 
 
