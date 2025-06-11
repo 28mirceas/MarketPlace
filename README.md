@@ -33,10 +33,10 @@ python app/databasemanager.py
 ```bash  
 python Main.py
 ```
-3.	Creează primul utilizator în secțiunea „User Management”.
+2.	Creează primul utilizator în secțiunea „User Management”.
 Notă: Primul utilizator creat are drepturi de administrator și poate șterge utilizatori, categorii, produse și comenzi.
-4.	Utilizează meniul pentru a administra utilizatorii, categoriile, produsele și comenzile.
-5.	Pentru a ieși din aplicație, selectează opțiunea „5. Ieșire din program”.
+3.	Utilizează meniul pentru a administra utilizatorii, categoriile, produsele și comenzile.
+4.	Pentru a ieși din aplicație, selectează opțiunea „5. Ieșire din program”.
 
 
 ## Funcționalități principale
