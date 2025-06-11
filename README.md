@@ -2,7 +2,30 @@
 
 ## Descriere
 
-Acest proiect reprezintă o aplicație simpla de tip magazin-online implementată în limbajul de programare Python. Aplicatia permite contruirea unui baze de date si efectuarea de operatiuni operatiuni de tip CRUD cu elementele  bazei de date.
+MarketPlace este o aplicație simplă de tip magazin online, scrisă în Python. Aplicația permite crearea și gestionarea unei baze de date, oferind operațiuni CRUD (Creare, Citire, Actualizare, Ștergere) pentru utilizatori, categorii, produse și comenzi.
+
+## Tehnologii folosite
+
+- Python 3.x  
+- SQLite (baza de date)  
+- Selenium (pentru testare automată)  
+- unittest (framework pentru testare)
+
+## Instalare
+
+1. Clonează proiectul:
+```bash
+git clone https://github.com/28mirceas/MarketPlace.git
+cd MarketPlace
+```
+3. Instalează dependențele:
+```bash   
+pip install -r requirements.txt
+```
+5. Creează baza de date rulând scriptul:
+ ```bash  
+python app/databasemanager.py
+```
 
 ## Utilizare
 
