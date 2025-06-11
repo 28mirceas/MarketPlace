@@ -46,6 +46,17 @@ Notă: Primul utilizator creat are drepturi de administrator și poate șterge u
 3. Product Management: adaugă, modifică, șterge produse; listare produse
 4. Order Management: adaugă, modifică, șterge comenzi; listare comenzi pentru utilizatorul logat
 
+##  Testare automată
+
+Aplicația folosește Selenium și unittest pentru testarea automată a funcționalităților.
+
+Rulează testele cu:
+```bash 
+python tests/suita_teste.py
+```
+Pentru generarea rapoartelor HTML, se folosește HtmlTestRunner.
+
+
 
 
 
