@@ -1,14 +1,14 @@
 #Aplicatie-Marketplace
-from databasemanager import DatabaseManager
 from user import User
 from product import Product
+from base_entity import BaseEntity
 
-db_manager = DatabaseManager("baza12.db")  # Variabilă globală
 
-class Order:
+class Order(BaseEntity):
     logged_in_user = None  # Variabilă de clasă pentru a reține userul care este logat
 
     def __init__(self, order_date, user_id, id=None):
+        super().__init__()
         self.id = id
         self.order_date = order_date
         self.user_id = user_id
@@ -17,7 +17,7 @@ class Order:
     def save_to_db(self):
         query = '''INSERT INTO orders (order_date, user_id) VALUES (?, ?)'''
         params = (self.order_date, self.user_id)
-        db_manager.execute_query(query, params)
+        self.db_manager.execute_query(query, params)
         self.id = db_manager.cursor.lastrowid  # Salvează ID-ul comenzii
         print(f"Comanda cu ID {self.id} a fost adăugată cu succes in tabelul orders!")
         return self.id
@@ -40,6 +40,7 @@ class Order:
 
     @staticmethod
     def add_order():
+        temp = BaseEntity() #Folosirea unei instante temporare
         order = Order.create_from_input()
         if order is None:
             return
@@ -59,7 +60,7 @@ class Order:
 
         # Obține prețul
         query = "SELECT price FROM products WHERE id = ?"
-        result = db_manager.fetch_data(query, (product_id,))
+        result = temp.db_manager.fetch_data(query, (product_id,))
         if not result:
             print("Produsul nu există.")
             return
@@ -70,7 +71,7 @@ class Order:
         query = '''INSERT INTO order_items (quantity, total_price, order_id, product_id)
                        VALUES (?, ?, ?, ?)'''
         params = (quantity, total_price, order_id, product_id)
-        db_manager.execute_query(query, params)
+        temp.db_manager.execute_query(query, params)
 
         print(f"Produsul {product_id} a fost adăugat cu succes în comanda {order_id}!")
         Order.list_orders()
@@ -97,6 +98,7 @@ class Order:
 
     @staticmethod
     def list_orders2():
+        temp = BaseEntity() #Folosirea unei instante temporare
         print("Pentru a vedea comenzile dumneavoastră trebuie să fiți autentificat!")
 
         if User.logged_in_user is None:
@@ -116,7 +118,7 @@ class Order:
                    JOIN products p ON oi.product_id = p.id 
                    WHERE o.user_id = ?'''
         params = (user_id,)
-        orders = db_manager.execute_query(query, params)
+        orders = temp.db_manager.execute_query(query, params)
 
         if not orders:
             print("Nu ai făcut nicio comandă!")
@@ -130,6 +132,7 @@ class Order:
 
     @staticmethod
     def list_orders():
+        temp = BaseEntity() #Folosirea unei instante temporare
         print("Vizualizare comenzi:")
 
         if User.logged_in_user is None:
@@ -148,7 +151,7 @@ class Order:
                    JOIN products p ON oi.product_id = p.id
                    WHERE o.user_id = ?'''
 
-        orders = db_manager.execute_query(query, (user_id,))
+        orders = temp.db_manager.execute_query(query, (user_id,))
 
         if not orders:
             print("Nu ai făcut nicio comandă!")
@@ -168,7 +171,7 @@ class Order:
             self.order_date = new_order_date
 
         query = "UPDATE orders SET order_date = ? WHERE id = ?"
-        db_manager.execute_query(query, (self.order_date, self.id))
+        self.db_manager.execute_query(query, (self.order_date, self.id))
         print(f"Comanda '{self.id}' a fost actualizata!")
         Order.list_orders()
 
@@ -197,6 +200,7 @@ class Order:
 
     @staticmethod
     def get_order_by_id(user_id):
+        temp = BaseEntity() #Folosirea unei instante temporare
         while True:
             user_input = input("Introduceți ID-ul comenzii (sau apăsați Enter pentru a anula): ").strip()
 
@@ -212,7 +216,7 @@ class Order:
 
             # Căutăm comanda cu acel ID și user_id
             query = "SELECT * FROM orders WHERE id = ? AND user_id = ?"
-            result = db_manager.fetch_data(query, (order_id, user_id))
+            result = temp.db_manager.fetch_data(query, (order_id, user_id))
 
             if result:
                 id_, order_date, user_id = result[0]
@@ -224,7 +228,7 @@ class Order:
     def delete(self):
         """Șterge comanda din baza de date."""
         query = "DELETE FROM orders WHERE id = ?"
-        db_manager.execute_query(query, (self.id,))
+        self.db_manager.execute_query(query, (self.id,))
         print(f"Comanda cu ID-ul '{self.id}' a fost ștearsa!")
 
 
