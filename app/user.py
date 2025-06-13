@@ -1,13 +1,13 @@
 #Aplicatie-Marketplace-User
-import bcrypt
-from databasemanager import DatabaseManager
+from base_entity import BaseEntity
 
-db_manager = DatabaseManager("baza12.db")  # Variabilă globală
 
-class User:
+
+class User(BaseEntity):
     logged_in_user = None  # Variabilă de clasă pentru a reține userul care este logat
 
     def __init__(self, username, email, password, first_name, last_name, address, city, postal_code, country, id=None):
+        super().__init__()
         self.id = id
         self.username = username
         self.email = email
@@ -25,12 +25,13 @@ class User:
                                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'''
         params = (self.username, self.email, self.password, self.first_name, self.last_name, self.address, self.city,
                   self.postal_code, self.country)
-        db_manager.execute_query(query, params)
+        self.db_manager.execute_query(query, params)
         print(f"Userul {self.username}  a fost adaugat cu succes!")
 
 
     @staticmethod
     def create_from_input():
+        temp = BaseEntity() #Folosirea unei instante temporare
         while True:
             username = input("Introduceți username-ul userului pe care doriti sa-l adaugati: ").strip()
             if not username:
@@ -38,7 +39,7 @@ class User:
                 continue
             # Verificați dacă username-ul nu există deja în baza de date
             query1 = "SELECT username FROM users"
-            users_list = db_manager.execute_query(query1)
+            users_list = temp.db_manager.execute_query(query1)
             if users_list:
                 existing_users = [user[0] for user in users_list]  # Extragem doar username
                 if username in existing_users:
@@ -52,7 +53,7 @@ class User:
                 continue
             # Verificați dacă email-ul nu există deja în baza de date
             query2 = "SELECT email FROM users"
-            email_list = db_manager.execute_query(query2)
+            email_list = temp.db_manager.execute_query(query2)
             if email_list:
                 existing_emails = [user[0] for user in email_list]  # Extragem doar email
                 if email in existing_emails:
@@ -87,13 +88,14 @@ class User:
 
     @staticmethod
     def get_all_users():
+        temp = BaseEntity() #Folosirea unei instante temporare
         if not User.admin_login():
             print("Acces permis doar administratorului!")
             return
 
         """Returnează o listă cu toți utilizatorii din baza de date."""
         query = "SELECT id, username, email, first_name, last_name FROM users"
-        users_list = db_manager.fetch_data(query)
+        users_list = temp.db_manager.fetch_data(query)
 
         if not users_list:
             print("Nu există utilizatori în baza de date.")
@@ -119,11 +121,12 @@ class User:
             self.country = new_country
 
         query = """UPDATE users SET email = ?, address = ?, city = ?, postal_code = ?, country = ? WHERE id = ?"""
-        db_manager.execute_query(query, (self.email, self.address, self.city, self.postal_code, self.country, self.id))
+        self.db_manager.execute_query(query, (self.email, self.address, self.city, self.postal_code, self.country, self.id))
 
 
     @staticmethod
     def update_user():
+        temp = BaseEntity() #Folosirea unei instante temporare
         if User.logged_in_user is None:
             print("Vă rugăm să vă autentificați mai întâi.")
             if not User.user_login():
@@ -133,7 +136,7 @@ class User:
 
         # Obținem userul logat din baza de date
         query = "SELECT * FROM users WHERE username = ?"
-        result = db_manager.fetch_data(query, (username,))
+        result = temp.db_manager.fetch_data(query, (username,))
 
         if not result:
             print("Eroare: utilizatorul logat nu a fost găsit în baza de date.")
@@ -149,7 +152,7 @@ class User:
         if new_email and new_email != email:
             # Verificăm dacă emailul este deja folosit
             query = "SELECT id FROM users WHERE email = ? AND id != ?"
-            result = db_manager.fetch_data(query, (new_email, user.id))
+            result = temp.db_manager.fetch_data(query, (new_email, user.id))
             if result:
                 print("Această adresă de email este deja folosită de alt user.")
                 return
@@ -168,6 +171,7 @@ class User:
 
     @staticmethod
     def update_password():
+        temp = BaseEntity() #Folosirea unei instante temporare
         """Actualizează parola userului logat după verificarea celei vechi."""
         if User.logged_in_user is None:
             print("Vă rugăm să vă autentificați mai întâi.")
@@ -178,7 +182,7 @@ class User:
 
         # Obține parola din baza de date
         query = "SELECT password FROM users WHERE username = ?"
-        result = db_manager.fetch_data(query, (username,))
+        result = temp.db_manager.fetch_data(query, (username,))
 
         if not result or not result[0][0]:  # Verifică dacă user-ul există și are parolă validă
             print("Eroare: User inexistent sau parola nu este setată corect în baza de date!")
@@ -207,7 +211,7 @@ class User:
                 # Actualizăm parola în baza de date
                 query = "UPDATE users SET password = ? WHERE username = ?"
                 params = (new_password, username)
-                db_manager.execute_query(query, params)
+                temp.db_manager.execute_query(query, params)
 
                 print(f"Parola pentru userul '{username}' a fost schimbată cu succes!")
                 return
@@ -220,12 +224,13 @@ class User:
 
     @staticmethod
     def get_user_by_id():
+        temp = BaseEntity() #Folosirea unei instante temporare
         # Cerem admin să introducă Id-ul userului
         user_id = int(input("Introduceți Id-ul userului: ").strip())
 
         # Căutăm userul în baza de date
         query = "SELECT * FROM users WHERE id = ?"
-        result = db_manager.fetch_data(query, (user_id,))
+        result = temp.db_manager.fetch_data(query, (user_id,))
 
         if result:
             id_, username, email, password, first_name, last_name, address, city, postal_code, country = result[0]
@@ -238,7 +243,7 @@ class User:
     def delete(self):
         """Șterge userul din baza de date."""
         query = "DELETE FROM users WHERE id = ?"
-        db_manager.execute_query(query, (self.id,))
+        self.db_manager.execute_query(query, (self.id,))
         print(f"Userul a fost ștears!")
 
 
@@ -263,6 +268,7 @@ class User:
 
     @staticmethod
     def admin_login():
+        temp = BaseEntity() #Folosirea unei instante temporare
         if User.logged_in_user:  # Dacă deja e logat cineva (nu e None)
             return User.logged_in_user
 
@@ -270,7 +276,7 @@ class User:
         password1 = input("Introduceți parola de administrator: ")
 
         query1 = "SELECT username, password FROM users WHERE Id = 1"
-        admin_data = db_manager.fetch_data(query1)
+        admin_data = temp.db_manager.fetch_data(query1)
 
         if not admin_data:
             print("Eroare: Nu există un administrator în baza de date!")
@@ -289,13 +295,14 @@ class User:
 
     @staticmethod
     def user_login():
+        temp = BaseEntity() #Folosirea unei instante temporare
         """Verifică username-ul și parola și returnează user_id-ul sau None dacă autentificarea eșuează."""
         user1 = input("Introduceți username-ul: ")
         password1 = input("Introduceți parola: ")
 
         # Obținem doar id-ul și parola din baza de date
         query = "SELECT id, password FROM users WHERE username = ?"
-        result = db_manager.fetch_data(query, (user1,))
+        result = temp.db_manager.fetch_data(query, (user1,))
 
         if not result:
             print("Autentificare eșuată! Verifică datele introduse.")
