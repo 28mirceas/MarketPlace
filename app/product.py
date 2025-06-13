@@ -1,14 +1,14 @@
 #Aplicatie-Marketplace
-from databasemanager import DatabaseManager
 from user import User
 from category import Category
+from base_entity import BaseEntity
 
-db_manager = DatabaseManager("baza12.db")  # Variabilă globală
 
-class Product:
+class Product(BaseEntity):
     logged_in_user = None  # Variabilă de clasă pentru a reține userul care este logat
 
     def __init__(self, name, price, description, stock_count=0, category_id=None, id_=None):
+        super().__init__()
         self.id = id_  # ← Salvăm și ID-ul produsului
         self.name = name
         self.price = price
@@ -20,12 +20,13 @@ class Product:
     def save_to_db(self):
         query = '''INSERT INTO products(name, price, description, stock_count, category_id) VALUES(?, ?, ?, ?, ?)'''
         params = (self.name, self.price, self.description, self.stock_count, self.category_id)
-        db_manager.execute_query(query,params)
+        self.db_manager.execute_query(query,params)
         print(f"Produsul '{self.name}' a fost adăugat în categoria cu ID-ul {self.category_id}!")
 
 
     @staticmethod
     def create_from_input(category_id = None):
+        temp = BaseEntity() #Folosirea unei instante temporare
         while True:
             name = input("Introduceți numele produsului pe care doriti sa-l adaugati: ").strip()
             if not name:
@@ -58,7 +59,7 @@ class Product:
 
         # Calculăm noul stock_count pentru această categorie
         query = "SELECT COUNT(*) FROM products WHERE category_id = ?"
-        result = db_manager.fetch_data(query, (category_id,))
+        result = temp.db_manager.fetch_data(query, (category_id,))
         stock_count = result[0][0] + 1  # Auto-incrementăm
 
         return Product(name, price, description, stock_count, category_id)
@@ -80,9 +81,10 @@ class Product:
 
     @staticmethod
     def list_products():
+        temp = BaseEntity() #Folosirea unei instante temporare
         """Returnează o listă cu toate produsele din baza de date."""
         query = "SELECT * FROM products"
-        products = db_manager.fetch_data(query)
+        products = temp.db_manager.fetch_data(query)
         if not products:
             print("Nu există produse disponibile!")
             return None
@@ -96,9 +98,10 @@ class Product:
 
     @staticmethod
     def read_product(product_id=None):
+        temp = BaseEntity() #Folosirea unei instante temporare
         """Afișează un anumit produs din baza de date."""
         query = "SELECT * FROM products" #Afiseaza toate produsele
-        products = db_manager.fetch_data(query)
+        products = temp.db_manager.fetch_data(query)
         if not products:
             print("Nu există produse în baza de date.")
             return
@@ -113,7 +116,7 @@ class Product:
                 return
         query2 = "SELECT * FROM products WHERE id = ?"
         params = (product_id,)
-        result = db_manager.fetch_data(query2, params)
+        result = temp.db_manager.fetch_data(query2, params)
         if result:
             product = result[0]
             print(f"\nDetalii produs:\n"
@@ -135,7 +138,7 @@ class Product:
             self.stock_count = new_stock_count
 
         query = "UPDATE products SET name = ?, price = ?, description = ?, stock_count = ? WHERE id = ?"
-        db_manager.execute_query(query, (self.name, self.price, self.description, self.stock_count, self.id))
+        self.db_manager.execute_query(query, (self.name, self.price, self.description, self.stock_count, self.id))
         print(f"Produsul '{self.name}' a fost actualizat!")
         Product.list_products()
 
@@ -184,12 +187,13 @@ class Product:
 
     @staticmethod
     def get_product_by_id():
+        temp = BaseEntity() #Folosirea unei instante temporare
         # Cerem utilizatorului să introducă Id-ul produsului
         product_id = int(input("Introduceți Id-ul produsului: ").strip())
 
         # Căutăm produsul în baza de date
         query = "SELECT * FROM products WHERE id = ?"
-        result = db_manager.fetch_data(query, (product_id,))
+        result = temp.db_manager.fetch_data(query, (product_id,))
 
         if result:
             id_, name, price, description, stock_count, category_id = result[0]
@@ -202,7 +206,7 @@ class Product:
     def delete(self):
         """Șterge produsul din baza de date."""
         query = "DELETE FROM products WHERE id = ?"
-        db_manager.execute_query(query, (self.id,))
+        self.db_manager.execute_query(query, (self.id,))
         print(f"Produsul '{self.name}' a fost ștears!")
 
 
