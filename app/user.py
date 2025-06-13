@@ -2,7 +2,6 @@
 from base_entity import BaseEntity
 
 
-
 class User(BaseEntity):
     logged_in_user = None  # Variabilă de clasă pentru a reține userul care este logat
 
