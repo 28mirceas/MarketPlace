@@ -75,7 +75,6 @@ MarketPlace/
 │   ├── test_category.py
 │   └── test_order.py
 │
-|
 ├── requirements.txt
 └── README.md
 ```
