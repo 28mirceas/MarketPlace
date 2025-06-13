@@ -1,13 +1,13 @@
 #Aplicatie-Marketplace
-from databasemanager import DatabaseManager
 from user import User
+from base_entity import BaseEntity
 
-db_manager = DatabaseManager("baza12.db")  # Variabilă globală
 
-class Category:
+class Category(BaseEntity):
     logged_in_user = None  # Variabilă de clasă pentru a reține userul care este logat
 
     def __init__(self,name,description, id_=None):
+        super().__init__()
         self.id = id_
         self.name = name
         self.description = description
@@ -15,14 +15,15 @@ class Category:
 
     def save_to_db(self):
         query = '''INSERT INTO categories(name, description) VALUES(?,?)'''
-        db_manager.execute_query(query,(self.name,self.description))
+        self.db_manager.execute_query(query,(self.name,self.description))
         print(f"Categoria '{self.name}' a fost adaugata cu succes!")
 
 
     @staticmethod
-    def category_exists(name):
+    def category_exists(name):        
+        temp = BaseEntity() #Folosirea unei instante temporare
         query = '''SELECT * FROM categories WHERE name = ?'''
-        result = db_manager.fetch_data(query, (name,))
+        result = temp.db_manager.fetch_data(query, (name,))
         return len(result) > 0
 
 
@@ -54,13 +55,14 @@ class Category:
 
 
     @staticmethod
-    def get_all_categories():
+    def get_all_categories():        
+        temp = BaseEntity() #Folosirea unei instante temporare
         if not User.admin_login():
             print("Acces permis doar administratorului!")
             return
         """Returnează o listă cu toate categoriile din baza de date."""
         query = "SELECT id, name FROM categories"
-        categories = db_manager.fetch_data(query)
+        categories = temp.db_manager.fetch_data(query)
         if not categories:
             print("Nu există categorii disponibile!")
             return None
@@ -72,13 +74,14 @@ class Category:
 
 
     @staticmethod
-    def get_category_by_name():
+    def get_category_by_name():        
+        temp = BaseEntity() #Folosirea unei instante temporare
         # Cerem utilizatorului să introducă numele categoriei
         category_name = input("Introduceți numele categoriei: ").strip()
 
         # Căutăm categoria în baza de date
         query = "SELECT id, name, description FROM categories WHERE name = ?"
-        result = db_manager.fetch_data(query, (category_name,))
+        result = temp.db_manager.fetch_data(query, (category_name,))
 
         if result:
             id_, name, desc = result[0]
@@ -95,7 +98,7 @@ class Category:
         if new_description:
             self.description = new_description
         query = "UPDATE categories SET name = ?, description = ? WHERE id = ?"
-        db_manager.execute_query(query, (self.name, self.description, self.id))
+        self.db_manager.execute_query(query, (self.name, self.description, self.id))
         print(f"Categoria '{self.name}' a fost actualizată.")
 
 
@@ -121,7 +124,7 @@ class Category:
     def delete(self):
         """Șterge categoria din baza de date."""
         query = "DELETE FROM categories WHERE id = ?"
-        db_manager.execute_query(query, (self.id,))
+        self.db_manager.execute_query(query, (self.id,))
         print(f"Categoria '{self.name}' a fost ștearsă.")
 
 
