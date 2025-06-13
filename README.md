@@ -62,6 +62,7 @@ MarketPlace/
 │
 ├── app/
 │   ├── databasemanager.py
+|   ├── base_entity.py   
 │   ├── user.py
 │   ├── category.py
 │   ├── product.py
@@ -72,7 +73,7 @@ MarketPlace/
 │   ├── test_user.py
 │   ├── test_product.py
 │   ├── test_category.py
-│   ├── test_order.py
+│   └── test_order.py
 │
 |
 ├── requirements.txt
