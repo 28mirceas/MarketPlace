@@ -266,8 +266,8 @@ class User(BaseEntity):
 
 
     @staticmethod
-    def admin_login():
-        temp = BaseEntity() #Folosirea unei instante temporare
+        def admin_login():
+        temp = BaseEntity()
         if User.logged_in_user:  # Dacă deja e logat cineva (nu e None)
             return User.logged_in_user
 
@@ -290,33 +290,30 @@ class User(BaseEntity):
         else:
             print("Username sau parolă incorecte!")
             return None
-
+            
 
     @staticmethod
-    def user_login():
-        temp = BaseEntity() #Folosirea unei instante temporare
+        def user_login():
+        temp = BaseEntity()
         """Verifică username-ul și parola și returnează user_id-ul sau None dacă autentificarea eșuează."""
         user1 = input("Introduceți username-ul: ")
         password1 = input("Introduceți parola: ")
 
-        # Obținem doar id-ul și parola din baza de date
-        query = "SELECT id, password FROM users WHERE username = ?"
+        query = "SELECT id,username,password FROM users WHERE username = ?"
         result = temp.db_manager.fetch_data(query, (user1,))
 
         if not result:
-            print("Autentificare eșuată! Verifică datele introduse.")
+            print("Autentificare eșuată! Verifică username.")
             return None
 
-        user_id, stored_password = result[0]  # Extragem datele din baza de date
+        user_id, username,stored_password = result[0]
 
-        # Compară parola introdusă cu cea stocata în baza de date
-        if password1 == stored_password:  # Comparăm parolele direct
+        if password1 == stored_password:
+            User.logged_in_user = user1  # Aici trebuie salvat DOAR username-ul
             print(f"Autentificare reușită! Bine ai venit, {user1}.")
-            User.logged_in_user = user_id
-            # Setăm utilizatorul logat
             return user_id
         else:
-            print("Autentificare eșuată! Verifică parola.")
+            print("Parolă incorectă.")
             return None
 
 
