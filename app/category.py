@@ -2,26 +2,31 @@
 from user import User
 from base_entity import BaseEntity
 
-
 class Category(BaseEntity):
     logged_in_user = None  # Variabilă de clasă pentru a reține userul care este logat
 
-    def __init__(self,name,description, id_=None):
+    def __init__(self,name,description, id_=None, db_manager=None):
         super().__init__()
         self.id = id_
         self.name = name
         self.description = description
+        self.db_manager = db_manager
 
 
     def save_to_db(self):
         query = '''INSERT INTO categories(name, description) VALUES(?,?)'''
         self.db_manager.execute_query(query,(self.name,self.description))
-        print(f"Categoria '{self.name}' a fost adaugata cu succes!")
+
+        # Obține id-ul inserat
+        result = self.db_manager.fetch_data("SELECT id FROM categories WHERE name = ?", (self.name,))
+        if result:
+            self.id = result[0][0]
+            print(f"Categoria '{self.name}' a fost adaugata cu succes! (ID: {self.id})")
 
 
     @staticmethod
-    def category_exists(name):        
-        temp = BaseEntity() #Folosirea unei instante temporare
+    def category_exists(name):
+        temp = BaseEntity()  # Folosirea unei instante temporare
         query = '''SELECT * FROM categories WHERE name = ?'''
         result = temp.db_manager.fetch_data(query, (name,))
         return len(result) > 0
@@ -55,8 +60,8 @@ class Category(BaseEntity):
 
 
     @staticmethod
-    def get_all_categories():        
-        temp = BaseEntity() #Folosirea unei instante temporare
+    def get_all_categories():
+        temp = BaseEntity()  # Folosirea unei instante temporare
         if not User.admin_login():
             print("Acces permis doar administratorului!")
             return
@@ -74,8 +79,8 @@ class Category(BaseEntity):
 
 
     @staticmethod
-    def get_category_by_name():        
-        temp = BaseEntity() #Folosirea unei instante temporare
+    def get_category_by_name():
+        temp = BaseEntity()  # Folosirea unei instante temporare
         # Cerem utilizatorului să introducă numele categoriei
         category_name = input("Introduceți numele categoriei: ").strip()
 
@@ -140,7 +145,7 @@ class Category(BaseEntity):
             cat.delete()  # Apelăm metoda delete() pe obiectul găsit
         else:
             print("Categoria nu a fost găsită.")
-        Category.get_all_categories()  # Afișăm lista actualizată de
+        Category.get_all_categories()  # Afișăm lista actualizată
 
 
 # Exemplu de utilizare
