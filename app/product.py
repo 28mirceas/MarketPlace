@@ -1,13 +1,12 @@
 #Aplicatie-Marketplace
 from user import User
 from category import Category
-from base_entity import BaseEntity
-
+from .base_entity import BaseEntity
 
 class Product(BaseEntity):
     logged_in_user = None  # Variabilă de clasă pentru a reține userul care este logat
 
-    def __init__(self, name, price, description, stock_count=0, category_id=None, id_=None):
+    def __init__(self, name, price, description, stock_count=0, category_id=None, id_=None,db_manager=None):
         super().__init__()
         self.id = id_  # ← Salvăm și ID-ul produsului
         self.name = name
@@ -15,18 +14,24 @@ class Product(BaseEntity):
         self.description = description
         self.stock_count = stock_count
         self.category_id = category_id
+        self.db_manager = db_manager
 
 
     def save_to_db(self):
         query = '''INSERT INTO products(name, price, description, stock_count, category_id) VALUES(?, ?, ?, ?, ?)'''
         params = (self.name, self.price, self.description, self.stock_count, self.category_id)
         self.db_manager.execute_query(query,params)
-        print(f"Produsul '{self.name}' a fost adăugat în categoria cu ID-ul {self.category_id}!")
+
+        # Obține id-ul inserat
+        result = self.db_manager.fetch_data("SELECT id FROM products WHERE name = ?", (self.name,))
+        if result:
+            self.id = result[0][0]
+            print(f"Produsul '{self.name}' a fost adăugat în categoria cu ID-ul {self.category_id}!")
 
 
     @staticmethod
     def create_from_input(category_id = None):
-        temp = BaseEntity() #Folosirea unei instante temporare
+        temp = BaseEntity()  # Folosirea unei instante temporare
         while True:
             name = input("Introduceți numele produsului pe care doriti sa-l adaugati: ").strip()
             if not name:
@@ -81,7 +86,7 @@ class Product(BaseEntity):
 
     @staticmethod
     def list_products():
-        temp = BaseEntity() #Folosirea unei instante temporare
+        temp = BaseEntity()  # Folosirea unei instante temporare
         """Returnează o listă cu toate produsele din baza de date."""
         query = "SELECT * FROM products"
         products = temp.db_manager.fetch_data(query)
@@ -98,7 +103,7 @@ class Product(BaseEntity):
 
     @staticmethod
     def read_product(product_id=None):
-        temp = BaseEntity() #Folosirea unei instante temporare
+        temp = BaseEntity()  # Folosirea unei instante temporare
         """Afișează un anumit produs din baza de date."""
         query = "SELECT * FROM products" #Afiseaza toate produsele
         products = temp.db_manager.fetch_data(query)
@@ -186,8 +191,8 @@ class Product(BaseEntity):
 
 
     @staticmethod
-    def get_product_by_id():
-        temp = BaseEntity() #Folosirea unei instante temporare
+    def get_product_by_id(db_manager=None):
+        temp = BaseEntity(db_manager=db_manager)  # Folosim baza de date de test, dacă e transmisă
         # Cerem utilizatorului să introducă Id-ul produsului
         product_id = int(input("Introduceți Id-ul produsului: ").strip())
 
