@@ -1,12 +1,11 @@
 #Aplicatie-Marketplace-User
-from base_entity import BaseEntity
-
+from .base_entity import BaseEntity
 
 class User(BaseEntity):
     logged_in_user = None  # Variabilă de clasă pentru a reține userul care este logat
 
-    def __init__(self, username, email, password, first_name, last_name, address, city, postal_code, country, id=None):
-        super().__init__()
+    def __init__(self, username, email, password, first_name, last_name, address, city, postal_code, country, id=None, db_manager=None):
+        super().__init__(db_manager=db_manager)  # ✅ Transmite managerul către BaseEntity
         self.id = id
         self.username = username
         self.email = email
@@ -18,14 +17,19 @@ class User(BaseEntity):
         self.postal_code = postal_code
         self.country = country
 
-
     def save_to_db(self):
-        query = '''INSERT INTO users (username, email, password, first_name, last_name, address, city, postal_code, country) 
-                                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'''
-        params = (self.username, self.email, self.password, self.first_name, self.last_name, self.address, self.city,
-                  self.postal_code, self.country)
-        self.db_manager.execute_query(query, params)
-        print(f"Userul {self.username}  a fost adaugat cu succes!")
+        query = """
+            INSERT INTO users (username, email, password, first_name, last_name, address, city, postal_code, country)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """
+        self.db_manager.execute_query(query, (self.username, self.email, self.password, self.first_name,
+                                              self.last_name, self.address, self.city, self.postal_code, self.country))
+
+        # Obține id-ul inserat
+        result = self.db_manager.fetch_data("SELECT id FROM users WHERE username = ?", (self.username,))
+        if result:
+            self.id = result[0][0]
+            print(f"Userul {self.username} a fost adăugat cu succes! (ID: {self.id})")
 
 
     @staticmethod
@@ -87,7 +91,7 @@ class User(BaseEntity):
 
     @staticmethod
     def get_all_users():
-        temp = BaseEntity() #Folosirea unei instante temporare
+        temp = BaseEntity()# Folosirea unei instante temporare
         if not User.admin_login():
             print("Acces permis doar administratorului!")
             return
@@ -125,14 +129,14 @@ class User(BaseEntity):
 
     @staticmethod
     def update_user():
-        temp = BaseEntity() #Folosirea unei instante temporare
+        temp = BaseEntity() # Folosirea unei instante temporare
         if User.logged_in_user is None:
             print("Vă rugăm să vă autentificați mai întâi.")
             if not User.user_login():
                 return
 
         username = User.logged_in_user
-
+        #print(f"[DEBUG] User.logged_in_user = {User.logged_in_user}")
         # Obținem userul logat din baza de date
         query = "SELECT * FROM users WHERE username = ?"
         result = temp.db_manager.fetch_data(query, (username,))
@@ -170,7 +174,7 @@ class User(BaseEntity):
 
     @staticmethod
     def update_password():
-        temp = BaseEntity() #Folosirea unei instante temporare
+        temp = BaseEntity() # folosirea unei instante temporare
         """Actualizează parola userului logat după verificarea celei vechi."""
         if User.logged_in_user is None:
             print("Vă rugăm să vă autentificați mai întâi.")
@@ -223,7 +227,7 @@ class User(BaseEntity):
 
     @staticmethod
     def get_user_by_id():
-        temp = BaseEntity() #Folosirea unei instante temporare
+        temp = BaseEntity() # Folosirea unei instante temporare
         # Cerem admin să introducă Id-ul userului
         user_id = int(input("Introduceți Id-ul userului: ").strip())
 
@@ -243,7 +247,7 @@ class User(BaseEntity):
         """Șterge userul din baza de date."""
         query = "DELETE FROM users WHERE id = ?"
         self.db_manager.execute_query(query, (self.id,))
-        print(f"Userul a fost ștears!")
+        print(f"Userul a fost șters!")
 
 
     @staticmethod
@@ -266,7 +270,7 @@ class User(BaseEntity):
 
 
     @staticmethod
-        def admin_login():
+    def admin_login():
         temp = BaseEntity()
         if User.logged_in_user:  # Dacă deja e logat cineva (nu e None)
             return User.logged_in_user
@@ -290,10 +294,9 @@ class User(BaseEntity):
         else:
             print("Username sau parolă incorecte!")
             return None
-            
 
     @staticmethod
-        def user_login():
+    def user_login():
         temp = BaseEntity()
         """Verifică username-ul și parola și returnează user_id-ul sau None dacă autentificarea eșuează."""
         user1 = input("Introduceți username-ul: ")
